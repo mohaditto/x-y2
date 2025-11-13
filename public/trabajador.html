@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trabajador</title>
+  <!-- Bootstrap (solo CSS para mejorar apariencia) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ENjdO4Dr2bkBIFxQpeoYz1C+6qU9GqQ8K/0rGmC1qz1Y5n3yZzv3g9WZ0z3KkN1M" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/styless.css">
+</head>
+<body>
+  <div class="container my-4">
+    <div class="d-flex align-items-center mb-3">
+      <h1 class="me-auto">Área Capataz</h1>
+      <button id="btn-logout" class="btn btn-danger">Cerrar sesión</button>
+    </div>
+
+    <input type="radio" name="tab" id="tab1" checked>
+    <input type="radio" name="tab" id="tab2">
+    <input type="radio" name="tab" id="tab3">
+    <input type="radio" name ="tab" id="tab4">
+
+    <div class="tabs mb-3">
+      <label for="tab1">Asistencia</label>
+      <label for="tab2">Herramientas</label>
+      <label for="tab3">Historial</label>
+      <label for="tab4">Devolución</label>
+    </div>
+
+    <div class="content">
+      <section id="content1">
+        <h2>Asistencia</h2>
+        <form class="card p-3 mb-3">
+          <div class="row g-2 align-items-center">
+            <div class="col-auto">
+              <input class="form-control" type="datetime-local" id="asistencia" name="asistencia">
+            </div>
+            <div class="col-auto">
+              <button id="btnRegistrar" class="btn btn-primary">Registrar Entrada</button>
+            </div>
+            <div class="col-auto">
+              <button id="btnSalida" class="btn btn-secondary" disabled>Registrar Salida</button>
+            </div>
+          </div>
+        </form>
+
+        <h5>Mi asistencia</h5>
+        <div class="table-wrap card p-3">
+          <table id="tablaAsistencia" class="table table-sm table-striped mb-0">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Hora de entrada</th>
+                <th>Hora de salida</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="content2" class="mt-4">
+        <h3>Herramientas</h3>
+
+        <!-- Alerta de herramientas dañadas -->
+        <div id="alertaDañadas" class="alert alert-danger d-none" style="display: none !important;">
+          <strong>⚠️ Atención:</strong> Hay herramientas dañadas o en mantenimiento que no pueden ser prestadas.
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          <div id="listaDañadas" style="margin-top: 10px; max-height: 200px; overflow-y: auto;"></div>
+        </div>
+
+        <div class="card p-3 mb-3">
+          <div class="row g-2 align-items-center">
+            <div class="col-md-5">
+              <input class="form-control" type="search" id="buscaHerramienta" placeholder="Buscar por nombre...">
+            </div>
+            <div class="col-auto">
+              <button id="btnBuscar" class="btn btn-outline-primary">Buscar</button>
+            </div>
+            <div class="col-auto">
+              <button id="btnActualizar" class="btn btn-outline-secondary">Actualizar</button>
+            </div>
+          </div>
+
+          <hr>
+          <div id="asignacion" class="d-flex gap-2 align-items-center">
+            <label class="mb-0">Asignar a trabajador:</label>
+            <select id="trabajadorSelect" class="form-select w-auto">
+              <option value="">Seleccione un trabajador</option>
+            </select>
+            <button id="btnPrestar" class="btn btn-success">Prestar herramienta</button>
+          </div>
+        </div>
+
+        <h4>Mis herramientas</h4>
+        <div class="table-wrap card p-3">
+          <table id="tablaHerramientas" class="table table-hover table-sm mb-0">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+
+
+      <section id="content3" class="mt-4">
+        <h3>Historial General</h3>
+
+        <div class="card p-3 mb-3">
+          <div class="row g-2 align-items-center">
+            <div class="col-md-8">
+              <input class="form-control" type="text" id="buscarHistorial" placeholder="Ej: Juan o Martillo">
+            </div>
+            <div class="col-auto">
+              <button id="btnBuscarHistorial" class="btn btn-outline-primary">Buscar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-wrap card p-3">
+          <table id="tablaHistorial" class="table table-hover table-sm mb-0">
+            <thead>
+              <tr>
+                <th>Trabajador</th>
+                <th>Herramienta</th>
+                <th>Fecha de Préstamo</th>
+                <th>Fecha de Devolución</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="contentDevolucion" class="mt-4">
+        <h3>Devolución de Herramientas</h3>
+
+        <div class="card p-3 mb-3">
+          <p class="mb-0">Seleccione las herramientas que desea devolver</p>
+        </div>
+
+        <div class="table-wrap card p-3 mb-3">
+          <table id="tablaDevolucion" class="table table-hover table-sm mb-0">
+            <thead>
+              <tr>
+                <th>Herramienta</th>
+                <th>Trabajador</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="text-end">
+          <button id="btnDevolver" class="btn btn-success">Registrar Devolución</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Modal mejorado para cambiar estado de herramienta -->
+  <div id="modalEstado" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; flex-direction: column;">
+    <div style="background: white; padding: 40px; border-radius: 12px; max-width: 600px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); animation: slideDown 0.3s ease-out;">
+      <h2 style="margin: 0 0 10px 0; color: #333; text-align: center;">Cambiar Estado de Herramienta</h2>
+      <p id="modalHerramientaNombre" style="font-weight: bold; margin: 0 0 30px 0; text-align: center; color: #666; font-size: 16px;"></p>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px;">
+        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 15px; border: 2px solid #ddd; border-radius: 8px; transition: all 0.3s; background: #f9f9f9;">
+          <input type="radio" name="nuevoEstado" value="DISPONIBLE" style="cursor: pointer; width: 18px; height: 18px;">
+          <div>
+            <span style="color: #4CAF50; font-weight: bold; display: block;">● DISPONIBLE</span>
+            <small style="color: #999;">Lista para usar</small>
+          </div>
+        </label>
+        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 15px; border: 2px solid #ddd; border-radius: 8px; transition: all 0.3s; background: #f9f9f9;">
+          <input type="radio" name="nuevoEstado" value="NO_DISPONIBLE" style="cursor: pointer; width: 18px; height: 18px;">
+          <div>
+            <span style="color: #FF9800; font-weight: bold; display: block;">● NO DISPONIBLE</span>
+            <small style="color: #999;">En uso actualmente</small>
+          </div>
+        </label>
+        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 15px; border: 2px solid #ddd; border-radius: 8px; transition: all 0.3s; background: #f9f9f9;">
+          <input type="radio" name="nuevoEstado" value="MANTENCION" style="cursor: pointer; width: 18px; height: 18px;">
+          <div>
+            <span style="color: #2196F3; font-weight: bold; display: block;">● MANTENCIÓN</span>
+            <small style="color: #999;">En reparación</small>
+          </div>
+        </label>
+        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 15px; border: 2px solid #ddd; border-radius: 8px; transition: all 0.3s; background: #f9f9f9;">
+          <input type="radio" name="nuevoEstado" value="DAÑADA" style="cursor: pointer; width: 18px; height: 18px;">
+          <div>
+            <span style="color: #F44336; font-weight: bold; display: block;">● DAÑADA</span>
+            <small style="color: #999;">No funciona</small>
+          </div>
+        </label>
+        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 15px; border: 2px solid #ddd; border-radius: 8px; transition: all 0.3s; background: #f9f9f9; grid-column: 1 / -1;">
+          <input type="radio" name="nuevoEstado" value="BAJA" style="cursor: pointer; width: 18px; height: 18px;">
+          <div>
+            <span style="color: #9C27B0; font-weight: bold; display: block;">● BAJA</span>
+            <small style="color: #999;">Descartada del inventario</small>
+          </div>
+        </label>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end; border-top: 1px solid #eee; padding-top: 20px;">
+        <button id="btnCancelarEstado" style="padding: 10px 24px; background: #f0f0f0; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: background 0.3s;">Cancelar</button>
+        <button id="btnConfirmarEstado" style="padding: 10px 24px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: background 0.3s;">Aceptar cambio</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes slideDown {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    #modalEstado label:hover {
+      background: #f0f8ff;
+      border-color: #2196F3;
+    }
+
+    #btnConfirmarEstado:hover {
+      background: #45a049;
+    }
+
+    #btnCancelarEstado:hover {
+      background: #e0e0e0;
+    }
+  </style>
+
+  <script src="js/capataz.js"></script>
+  <script src="js/herramienta_capataz.js"></script>
+  <script src="js/historial_capataz.js"></script>
+  <script src="js/devolucion_capataz.js"></script>
+  
+  <script>
+    document.getElementById('btn-logout')?.addEventListener('click', () => {
+      localStorage.removeItem('jwt');
+      location.href = '/index.html';
+    });
+  </script>
+</body>
+</html>
