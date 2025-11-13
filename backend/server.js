@@ -2,8 +2,8 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
+import mysql from "mysql2";
 import "dotenv/config.js";
-// Usaremos SSE (Server-Sent Events) para notificaciones en tiempo real sin dependencias
 
 import authRoutes from "./routes/auth.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
@@ -12,9 +12,29 @@ import capatazRoutes from "./routes/capataz.routes.js";
 
 const app = express();
 
-// Configurar rutas absolutas
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Conexión MySQL (Railway)
+const db = mysql.createConnection({
+  host: process.env.MYSQLHOST || "localhost",
+  user: process.env.MYSQLUSER || "root",
+  password: process.env.MYSQLPASSWORD || "",
+  database: process.env.MYSQLDATABASE || "tomas_santo",
+  port: process.env.MYSQLPORT || 3306,
+});
+
+// Probar conexión
+db.connect((err) => {
+  if (err) {
+    console.error("Error al conectar a la base de datos:", err.message);
+  } else {
+    console.log("Conectado correctamente a MySQL");
+  }
+});
+
+// Hacer accesible la conexión desde las rutas
+app.locals.db = db;
 
 // Middlewares
 app.use(cors());
@@ -27,36 +47,39 @@ app.get("/", (_req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
-// Inicializar colección de clientes SSE y broadcaster
+// SSE (notificaciones en tiempo real)
 app.locals.sseClients = [];
-app.locals.broadcast = function(event, data){
-  try{
-    const payload = typeof data === 'string' ? data : JSON.stringify(data);
-    (app.locals.sseClients || []).forEach(res => {
-      try{
+app.locals.broadcast = function (event, data) {
+  try {
+    const payload = typeof data === "string" ? data : JSON.stringify(data);
+    (app.locals.sseClients || []).forEach((res) => {
+      try {
         res.write(`event: ${event}\n`);
         res.write(`data: ${payload}\n\n`);
-      }catch(e){ /* ignore */ }
+      } catch (e) {}
     });
-  }catch(e){ console.error('Broadcast error', e); }
+  } catch (e) {
+    console.error("Broadcast error", e);
+  }
 };
 
-// Endpoint SSE para que clientes se suscriban
-app.get('/sse', (req, res) => {
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
+app.get("/sse", (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
   res.flushHeaders && res.flushHeaders();
-  res.write(': connected\n\n');
+  res.write(": connected\n\n");
 
   app.locals.sseClients.push(res);
 
-  req.on('close', () => {
-    app.locals.sseClients = (app.locals.sseClients || []).filter(r => r !== res);
+  req.on("close", () => {
+    app.locals.sseClients = (app.locals.sseClients || []).filter(
+      (r) => r !== res
+    );
   });
 });
 
-// Rutas
+// Rutas API
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/trabajador", trabajadorRoutes);
